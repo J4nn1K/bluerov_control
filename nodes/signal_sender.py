@@ -13,7 +13,7 @@ class InputGeneratorNode():
     def run(self):
         msg = Float32()
         while not rospy.is_shutdown():
-            msg.data = 0.5
+            msg.data = 1.0
             self.signal_pub.publish(msg)
             
             rospy.sleep(1)
@@ -21,9 +21,9 @@ class InputGeneratorNode():
             msg.data = 0.0
             self.signal_pub.publish(msg)
             
-            rospy.sleep(6)
+            rospy.sleep(5)
             
-            msg.data = -0.5
+            msg.data = -1.0
             self.signal_pub.publish(msg)
             
             rospy.sleep(1)
@@ -31,7 +31,7 @@ class InputGeneratorNode():
             msg.data = 0.0
             self.signal_pub.publish(msg)
             
-            rospy.sleep(6)
+            rospy.sleep(5)
 
 def main():
     node = InputGeneratorNode("signal_generator")

@@ -3,26 +3,32 @@
 import rospy
 from sensor_msgs.msg import FluidPressure
 from bluerov_sim.msg import ActuatorCommands
-
+from std_msgs.msg import Float64
 
 class ControlNode():
     def __init__(self,name):
         rospy.init_node(name)
 
-        self.controller = Controller()
-        self.t_last = rospy.get_time()
-    
+        #self.controller = Controller()
+        #self.t_last = rospy.get_time()
+        self.K = 1
+
         self.vertical_thrust = 0.0
         self.depth_setpoint = -0.5
 
-        self.actuator_pub = rospy.Publisher("bluerov/mixer/actuator_commands",
-                                            ActuatorCommands,
+        self.vertical_thrust_pub = rospy.Publisher("bluerov/vertical_thrust",
+                                            Float64,
                                             queue_size=1)
 
+        # self.pressure_sub = rospy.Subscriber("barometric_pressure",
+        #                                      FluidPressure,
+        #                                      self.on_pressure,
+        #                                      queue_size=1)
+        
         self.pressure_sub = rospy.Subscriber("pressure",
                                              FluidPressure,
                                              self.on_pressure,
-                                             queue_size=1)
+                                             queue_size=1)                                     
     
     def on_pressure(self, msg):
         water_pressure = msg.fluid_pressure
@@ -32,27 +38,29 @@ class ControlNode():
         depth = -(water_pressure - air_pressure)/pascal_per_meter
         
         error = depth - self.depth_setpoint
-        now = msg.header.stamp.to_sec()
+        
+        self.vertical_thrust = -self.K*error
+        rospy.loginfo(depth)
+        #now = msg.header.stamp.to_sec()
 
     #    update_controller(error=error, now=now)
 
     #def update_controller(self, error, now):
         
-        dt = now - self.t_last
-        self.t_last = now
+        #dt = now - self.t_last
+        #self.t_last = now
 
-        u = self.controller.update(error=error, dt=dt)
+        #u = self.controller.update(error=error, dt=dt)
 
-        self.vertical_thrust = -u
-        rospy.loginfo(u)
+        #self.vertical_thrust = -u
+        #rospy.loginfo(u)
     
     def publish_message(self):
-        msg = ActuatorCommands()
+        msg = Float64()
         
-        msg.header.stamp = rospy.Time.now()
-        msg.vertical_thrust = self.vertical_thrust
+        msg.data = self.vertical_thrust
         
-        self.actuator_pub.publish(msg)
+        self.vertical_thrust_pub.publish(msg)
     
     def run(self):
         rate = rospy.Rate(30.0)

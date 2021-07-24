@@ -1,0 +1,58 @@
+<launch>
+    <!-- vehicle, camera name -->
+    <arg name="vehicle_type" default="bluerov" />
+    <arg name="vehicle_name" default="bluerov" />
+    <arg name="camera_name" default="vertical_camera" />
+    <arg name="do_rectify" value="false" />
+  
+    <!-- use gazebo gui or rviz -->
+    <arg name="gui" default="true" />
+    <arg name="rviz" default="false" />
+  
+    <!-- Vehicle spawn position so that tags are seen -->
+    <arg name="x" default="0.7" />
+    <arg name="y" default="2.0" />
+    <arg name="z" default="-0.7" />
+    <arg name="P" default="0.0" />
+    <arg name="R" default="0.0" />
+    <arg name="Y" default="1.57" />
+    <arg name="camera" default="false" />
+
+    <!-- known tags for AprilTag algorithm  -->
+    <!-- <arg name="tag_file" value="$(find mu_auv_localization)/config/tags_bundle.yaml" /> -->
+  
+    <!-- World -->
+    <include file="$(find bluerov_sim)/launch/gazebo_tags.launch" />
+  
+    <!-- EKF specific -->
+    <!-- <arg name="process_model" default="simple" /> -->
+    <!-- <arg name="measurement_model" default="dist" /> -->
+  
+    <!-- launch robot specific nodes in namespace -->
+    <group ns="$(arg vehicle_name)">
+      <param name="vehicle_name" value="$(arg vehicle_name)" />
+      <param name="vehicle_type" value="$(arg vehicle_type)" />
+  
+      <!-- spawn BlueROV model -->
+      <include file="$(find bluerov_sim)/launch/spawn_vehicle.launch">
+        <arg name="camera" value="$(arg camera)" />
+        <arg name="x" value="$(arg x)" />
+        <arg name="y" value="$(arg y)" />
+        <arg name="z" value="$(arg z)" />
+        <arg name="R" default="$(arg R)" />
+        <arg name="P" default="$(arg P)" />
+        <arg name="Y" default="$(arg Y)" />
+      </include>
+  
+      <!-- start tf publisher -->
+      <!-- <include file="$(find hippocampus_common)/launch/tf_publisher.launch" pass_all_args="true"></include> -->
+  
+      <!-- start localization -->
+      <!-- <include file="$(find mu_auv_localization)/launch/localization_estimator.launch" pass_all_args="true"></include> -->
+  
+      <!-- Convert orientation from quaternion to roll, pitch, yaw -->
+      <!-- <include file="$(find hippocampus_common)/launch/quat_to_rpy.launch" /> -->
+  
+    </group>
+  
+  </launch>

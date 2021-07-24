@@ -1,30 +1,96 @@
 #!/usr/bin/env python
 import rospy
-from bluerov_sim.msg import ActuatorCommands
+import threading
+from std_msgs.msg import Float64
 from mavros_msgs.msg import MotorSetpoint
 
 
 class MixerNode():
-    def __init__(self, name):
-        rospy.init_node(name)
-        self.thrusters = self.init_mixing()
-        self.motor_setpoint_pub = rospy.Publisher(
-            "mavros/setpoint_motor/setpoint", MotorSetpoint, queue_size=1)
-        rospy.Subscriber("~actuator_commands",
-                         ActuatorCommands,
-                         self.actuator_callback,
-                         queue_size=1)
+    def __init__(self):
+        rospy.init_node("mixer")
 
-    def actuator_callback(self, msg):
-        output = MotorSetpoint()
-        output.header.stamp = rospy.Time.now()
-        for i, thruster in enumerate(self.thrusters):
-            output.setpoint[i] = (
-                thruster["roll"] * msg.roll + thruster["pitch"] * msg.pitch +
-                thruster["yaw"] * msg.yaw + thruster["thrust"] * msg.thrust +
-                thruster["lateral_thrust"] * msg.lateral_thrust +
-                thruster["vertical_thrust"] * msg.vertical_thrust)
-        self.motor_setpoint_pub.publish(output)
+        self.setpoint_pub = rospy.Publisher("mavros/setpoint_motor/setpoint",
+                                            MotorSetpoint,
+                                            queue_size=1)
+
+        self.data_lock = threading.RLock()
+
+        self.thruster = self.init_mixing()
+
+        self.roll = 0.0
+        self.pitch = 0.0
+        self.yaw = 0.0
+        self.thrust = 0.0
+        self.vertical_thrust = 0.0
+        self.lateral_thrust = 0.0
+
+        self.roll_sub = rospy.Subscriber("roll",
+                                         Float64,
+                                         self.on_roll,
+                                         queue_size=1)
+        self.pitch_sub = rospy.Subscriber("pitch",
+                                          Float64,
+                                          self.on_pitch,
+                                          queue_size=1)
+        self.yaw_sub = rospy.Subscriber("yaw",
+                                        Float64,
+                                        self.on_yaw,
+                                        queue_size=1)
+        self.thrust_sub = rospy.Subscriber("thrust",
+                                           Float64,
+                                           self.on_thrust,
+                                           queue_size=1)
+        self.vertical_thrust_sub = rospy.Subscriber("vertical_thrust",
+                                                    Float64,
+                                                    self.on_vertical_thrust,
+                                                    queue_size=1)
+        self.lateral_thrust_sub = rospy.Subscriber("lateral_thrust", Float64,
+                                                   self.on_lateral_thrust)
+
+    def run(self):
+        rate = rospy.Rate(50.0)
+        while not rospy.is_shutdown():
+            msg = self.mix()
+            self.setpoint_pub.publish(msg)
+            rate.sleep()
+
+    def on_roll(self, msg):
+        with self.data_lock:
+            self.roll = msg.data
+
+    def on_pitch(self, msg):
+        with self.data_lock:
+            self.pitch = msg.data
+
+    def on_yaw(self, msg):
+        with self.data_lock:
+            self.yaw = msg.data
+
+    def on_thrust(self, msg):
+        with self.data_lock:
+            self.thrust = msg.data
+
+    def on_vertical_thrust(self, msg):
+        with self.data_lock:
+            self.vertical_thrust = msg.data
+
+    def on_lateral_thrust(self, msg):
+        with self.data_lock:
+            self.lateral_thrust = msg.data
+
+    def mix(self):
+        msg = MotorSetpoint()
+        msg.header.stamp = rospy.Time.now()
+        with self.data_lock:
+            for i in range(8):
+                msg.setpoint[i] = (
+                    self.roll * self.thruster[i]["roll"] +
+                    self.pitch * self.thruster[i]["pitch"] +
+                    self.yaw * self.thruster[i]["yaw"] +
+                    self.thrust * self.thruster[i]["thrust"] +
+                    self.vertical_thrust * self.thruster[i]["vertical_thrust"] +
+                    self.lateral_thrust * self.thruster[i]["lateral_thrust"])
+        return msg
 
     def init_mixing(self):
         thruster = [None] * 8
@@ -80,9 +146,10 @@ class MixerNode():
 
         return thruster
 
+
 def main():
-    node = MixerNode("mixer")
-    rospy.spin()
+    node = MixerNode()
+    node.run()
 
 
 if __name__ == "__main__":

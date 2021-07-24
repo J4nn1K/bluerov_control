@@ -2,29 +2,28 @@
 
 import rospy
 from bluerov_sim.msg import ActuatorCommands
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32, Float64
 
 class InputGeneratorNode():
     def __init__(self,name):
         rospy.init_node(name)
-        self.thrust = 0.0
+        self.value = 0.0
         
-        self.actuator_pub = rospy.Publisher("bluerov/mixer/actuator_commands",
-                                            ActuatorCommands,
+        self.actuator_pub = rospy.Publisher("bluerov/lateral_thrust",
+                                            Float64,
                                             queue_size=1)
 
         self.signal_sub = rospy.Subscriber("signal", Float32, self.on_signal)                   
        
     def on_signal(self, msg):
-        self.thrust = msg.data
+        self.value = msg.data
     
     def run(self):
         rate = rospy.Rate(30)
         
         while not rospy.is_shutdown():
-            msg = ActuatorCommands()
-            msg.header.stamp = rospy.Time.now()
-            msg.thrust = self.thrust
+            msg = Float64()
+            msg.data = self.value
             self.actuator_pub.publish(msg)
             rate.sleep()
 
