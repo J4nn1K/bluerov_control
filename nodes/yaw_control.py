@@ -6,34 +6,35 @@ from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import Float64
 
 
-class DepthControlNode(pid.PidNode):
+class YawControlNode(pid.PidNode):
     def __init__(self, name):
-        super(DepthControlNode, self).__init__(name=name)
+        super(YawControlNode, self).__init__(name=name)
 
-        self.setpoint = -0.5
+        self.setpoint = 0.0
 
-        self.vertical_thrust_pub = rospy.Publisher("vertical_thrust",
-                                                   Float64,
-                                                   queue_size=1)
+        self.yaw_pub = rospy.Publisher("yaw",
+                                       Float64,
+                                       queue_size=1)
 
-        self.local_pose_sub = rospy.Subscriber("mavros/vision_pose/pose",
+        self.local_pose_sub = rospy.Subscriber("object_pose",
                                                PoseStamped,
                                                self.on_local_pose,
                                                queue_size=1)
 
     def on_local_pose(self, msg):
-        z = msg.pose.position.z
+        rospy.loginfo(msg)
+        y = msg.pose.position.y
         now = msg.header.stamp.to_sec()
 
         with self.data_lock:
-            error = self.setpoint - z
+            error = -(self.setpoint - y)
             u = self.update_controller(error=error, now=now)
 
-        self.vertical_thrust_pub.publish(Float64(u))
+        self.yaw_pub.publish(Float64(u))
 
 
 def main():
-    node = DepthControlNode("depth_controller")
+    node = YawControlNode("yaw_controller")
     node.run()
 
 

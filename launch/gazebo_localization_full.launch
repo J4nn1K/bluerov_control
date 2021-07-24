@@ -56,7 +56,9 @@
 
         <!-- Convert orientation from quaternion to roll, pitch, yaw -->
         <include file="$(find hippocampus_common)/launch/quat_to_rpy.launch" />
-
+        
+        <node name="armed" pkg="bluerov_control" type="arming.py"></node>
+        <node name="mixer" pkg="bluerov_control" type="mixer.py"></node>
     </group>
 
 </launch>
