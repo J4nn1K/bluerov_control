@@ -6,7 +6,7 @@ from hippocampus_common.node import Node
 from std_msgs.msg import Float64
 from hippocampus_msgs.msg import PidDebug
 
-from control.cfg import PidControlConfig
+from bluerov_control.cfg import PidControlConfig
 
 
 class PidNode(Node):
@@ -32,10 +32,6 @@ class PidNode(Node):
                                              PidDebug,
                                              queue_size=30)
 
-    def _on_setpoint(self, msg):
-        with self.data_lock:
-            self.setpoint = msg.data
-
     def _on_pid_reconfigure(self, config, level):
         """Callback for the dynamic reconfigure service to set PID control
         specific parameters.
@@ -49,18 +45,19 @@ class PidNode(Node):
             dict: The actual parameters that are currently applied.
         """
         with self.data_lock:
-            self.controller.p_gain = config["p"]
-            self.controller.i_gain = config["i"]
-            self.controller.d_gain = config["d"]
+            self.controller.K_p = config["K_p"]
+            self.controller.T_i = config["T_i"]
+            self.controller.T_d = config["T_d"]
+            
             self.controller.saturation = [
                 config["saturation_lower"], config["saturation_upper"]
             ]
             self.controller.integral_limits = [
                 config["integral_limit_lower"], config["integral_limit_upper"]
             ]
-            config["p"] = self.controller.p_gain
-            config["i"] = self.controller.i_gain
-            config["d"] = self.controller.d_gain
+            config["K_p"] = self.controller.K_p
+            config["T_i"] = self.controller.T_i
+            config["T_d"] = self.controller.T_d
             lower, upper = self.controller.saturation
             config["saturation_lower"] = lower
             config["saturation_upper"] = upper
@@ -103,9 +100,9 @@ class PidNode(Node):
                            error_derivative=self.controller._derivative,
                            error_integral=self.controller._integral,
                            setpoint=self.setpoint,
-                           p_gain=self.controller.p_gain,
-                           i_gain=self.controller.i_gain,
-                           d_gain=self.controller.i_gain,
+                           K_p=self.controller.K_p,
+                           T_i=self.controller.T_i,
+                           T_d=self.controller.T_d,
                            u_p=self.controller._u_p,
                            u_i=self.controller._u_i,
                            u_d=self.controller._u_d,
@@ -149,10 +146,10 @@ class Controller():
             control_output = controller.update(error=control_error, dt=0.02)
             print("Control output: {}".format(control_output))
     """
-    def __init__(self, p_gain=1.0, i_gain=0.0, d_gain=0.0):
-        self.p_gain = p_gain
-        self.i_gain = i_gain
-        self.d_gain = d_gain
+    def __init__(self, K_p=1.0, T_i=0.0, T_d=0.0):
+        self.K_p = K_p
+        self.T_i = T_i
+        self.T_d = T_d
         self.saturation = [-100, 100]
         self.integral_limits = [-1, 1]
         self._error = 0.0
@@ -181,9 +178,15 @@ class Controller():
         self._error = error
         self._update_integral(error, dt)
         self._update_derivative(error, dt, derror)
-        self._u_p = error * self.p_gain
-        self._u_i = self._integral * self.i_gain
-        self._u_d = self._derivative * self.d_gain
+        self._u_p = error * self.K_p
+        
+        if self.T_i == 0.0:
+            self._u_i = 0.0
+        else:
+            self._u_i = self._integral * (self.K_p / self.T_i)
+        
+        self._u_d = self._derivative * (self.K_p * self.T_d)
+        
         self._u = self.constrain(self._u_p + self._u_i + self._u_d)
         return self._u
 
@@ -247,34 +250,34 @@ class Controller():
             self._integral_limits = [lower, upper]
 
     @property
-    def p_gain(self):
+    def K_p(self):
         """Get or set the proportional gain of the controller.
 
         """
-        return self._p_gain
+        return self._K_p
 
-    @p_gain.setter
-    def p_gain(self, value):
-        self._p_gain = float(value)
+    @K_p.setter
+    def K_p(self, value):
+        self._K_p = float(value)
 
     @property
-    def i_gain(self):
+    def T_i(self):
         """Get or set the integral gain of the controller.
 
         """
-        return self._i_gain
+        return self._T_i
 
-    @i_gain.setter
-    def i_gain(self, value):
-        self._i_gain = float(value)
+    @T_i.setter
+    def T_i(self, value):
+        self._T_i = float(value)
 
     @property
-    def d_gain(self):
+    def T_d(self):
         """Get or set the derivative gain of the controller.
 
         """
-        return self._d_gain
+        return self._T_d
 
-    @d_gain.setter
-    def d_gain(self, value):
-        self._d_gain = float(value)
+    @T_d.setter
+    def T_d(self, value):
+        self._T_d = float(value)

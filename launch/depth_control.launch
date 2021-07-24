@@ -3,7 +3,7 @@
     
     <group ns="$(arg vehicle_name)">
         <arg name="param_file" default="$(find bluerov_control)/config/depth_control_default.yaml" />
-        <node name="depth_control_node" pkg="bluerov_control" type="depth_control_node2.py">
+        <node name="depth_control" pkg="bluerov_control" type="depth_control.py">
             <!-- <param name="use_ground_truth" value="$(arg use_ground_truth)" /> -->
             <rosparam file="$(arg param_file)" />
         </node>

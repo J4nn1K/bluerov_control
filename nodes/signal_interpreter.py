@@ -9,7 +9,7 @@ class InputGeneratorNode():
         rospy.init_node(name)
         self.value = 0.0
         
-        self.actuator_pub = rospy.Publisher("bluerov/lateral_thrust",
+        self.actuator_pub = rospy.Publisher("bluerov/yaw",
                                             Float64,
                                             queue_size=1)
 

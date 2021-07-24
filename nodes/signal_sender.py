@@ -16,7 +16,7 @@ class InputGeneratorNode():
             msg.data = 1.0
             self.signal_pub.publish(msg)
             
-            rospy.sleep(1)
+            rospy.sleep(8)
             
             msg.data = 0.0
             self.signal_pub.publish(msg)
@@ -26,7 +26,7 @@ class InputGeneratorNode():
             msg.data = -1.0
             self.signal_pub.publish(msg)
             
-            rospy.sleep(1)
+            rospy.sleep(8)
             
             msg.data = 0.0
             self.signal_pub.publish(msg)

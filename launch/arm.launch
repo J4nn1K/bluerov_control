@@ -1,11 +1,11 @@
 <launch>
     <!-- vehicle name -->
-    <arg name="vehicle_name" default="bluerov" />
+    <!-- <arg name="vehicle_name" default="bluerov" /> -->
     
     <!-- launch robot specific nodes in namespace -->
-    <group ns="$(arg vehicle_name)">
+    <!-- <group ns="$(arg vehicle_name)"> -->
         <node name="armed" pkg="bluerov_control" type="arming.py"></node>
         <node name="mixer" pkg="bluerov_control" type="mixer.py"></node>
-    </group>
+    <!-- </group> -->
   
   </launch>
