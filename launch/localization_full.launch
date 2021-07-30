@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find bluerov_control)/launch/localization_absolute.launch"></include>
+    <include file="$(find bluerov_control)/launch/localization_object.launch"></include>  
+</launch>
