@@ -3,8 +3,8 @@
 import rospy
 import math
 from control import pid
-from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import Float64
+from bluerov_control.msg import Configuration
 
 
 class YawControlNode(pid.PidNode):
@@ -13,25 +13,21 @@ class YawControlNode(pid.PidNode):
 
         self.setpoint = 0.0
 
+        self.configuration_sub = rospy.Subscriber("configuration",
+                                                  Configuration,
+                                                  self.on_configuration,
+                                                  queue_size=1)
+
         self.yaw_pub = rospy.Publisher("yaw",
                                        Float64,
                                        queue_size=1)
 
-        self.local_pose_sub = rospy.Subscriber("object_pose",
-                                               PoseStamped,
-                                               self.on_local_pose,
-                                               queue_size=1)
-
-    def on_local_pose(self, msg):
+    def on_configuration(self, msg):
         now = msg.header.stamp.to_sec()
-        x = msg.pose.position.x
-        y = msg.pose.position.y
-        
-        alpha = math.atan (y/x)
-        error = alpha
+        angle_to_object = msg.angle_to_object
 
         with self.data_lock:
-            error = -(self.setpoint - y)
+            error = -(self.setpoint - angle_to_object)
             u = self.update_controller(error=error, now=now)
 
         self.yaw_pub.publish(Float64(u))

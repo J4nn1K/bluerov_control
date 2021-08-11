@@ -56,6 +56,7 @@
 
       <node name="armed" pkg="bluerov_control" type="arming.py"></node>
       <node name="mixer" pkg="bluerov_control" type="mixer.py"></node>
+      <node name="configuration_helper" pkg="bluerov_control" type="configuration_helper.py"></node>
   
     </group>
   
