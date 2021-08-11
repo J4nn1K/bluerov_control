@@ -34,7 +34,7 @@
         <include file="$(find hippocampus_common)/launch/image_decoding.launch" pass_all_args="true">
             <arg name="output_topic" value="$(arg image_raw_topic)" />
         </include>
-        
+        <node name="mixer" pkg="bluerov_control" type="mixer.py"></node>
     </group>
 
 </launch>

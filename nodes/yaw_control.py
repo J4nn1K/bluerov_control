@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 import rospy
-from bluerov_control import pid
+import math
+from control import pid
 from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import Float64
 
@@ -22,9 +23,12 @@ class YawControlNode(pid.PidNode):
                                                queue_size=1)
 
     def on_local_pose(self, msg):
-        rospy.loginfo(msg)
-        y = msg.pose.position.y
         now = msg.header.stamp.to_sec()
+        x = msg.pose.position.x
+        y = msg.pose.position.y
+        
+        alpha = math.atan (y/x)
+        error = alpha
 
         with self.data_lock:
             error = -(self.setpoint - y)

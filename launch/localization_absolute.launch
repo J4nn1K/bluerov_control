@@ -27,6 +27,7 @@
 
         <!-- start localization -->
         <include file="$(find mu_auv_localization)/launch/localization_estimator.launch" pass_all_args="true"></include>
+        <!-- <include file="$(find mu_auv_localization)/launch/localization.launch" pass_all_args="true"></include> -->
 
         <!-- Convert orientation from quaternion to roll, pitch, yaw -->
         <include file="$(find hippocampus_common)/launch/quat_to_rpy.launch" />

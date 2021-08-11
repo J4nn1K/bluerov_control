@@ -13,6 +13,7 @@ catkin_python_setup()
 ## Generate dynamic reconfigure parameters in the 'config' folder
 generate_dynamic_reconfigure_options(
   config/PidControl.cfg
+  config/DepthControl.cfg
 )
 
 catkin_package()

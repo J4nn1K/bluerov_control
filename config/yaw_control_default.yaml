@@ -1,7 +1,0 @@
-K_p: 1.0
-T_i: 0.0
-T_d: 0.0
-saturation_lower: -1.5
-saturation_upper: 1.5
-integral_limit_lower: -1.0
-integral_limit_upper: 1.0
