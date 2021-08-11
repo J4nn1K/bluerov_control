@@ -2,9 +2,9 @@
     <arg name="vehicle_name" default="bluerov" />
     
     <group ns="$(arg vehicle_name)">
-        <!-- <arg name="param_file" default="$(find bluerov_control)/config/depth_control_default.yaml" /> -->
+        <arg name="param_file" default="$(find bluerov_control)/config/depth_control_simulation.yaml" />
         <node name="depth_control" pkg="bluerov_control" type="depth_control.py">
-            <!-- <rosparam file="$(arg param_file)" /> -->
+            <rosparam file="$(arg param_file)" />
         </node>
         <node name="depth_setpoint" pkg="bluerov_control" type="depth_setpoint.py">
 

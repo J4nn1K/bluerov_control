@@ -1,0 +1,10 @@
+<launch> 
+    <arg name="vehicle_name" default="bluerov" />
+    
+    <group ns="$(arg vehicle_name)">
+        <arg name="param_file" default="$(find bluerov_control)/config/surge_control_simulation.yaml" />
+        <node name="surge_control" pkg="bluerov_control" type="surge_control.py">
+            <rosparam file="$(arg param_file)" />
+        </node>
+    </group>
+</launch>

@@ -15,7 +15,7 @@ class DepthControlNode(pid.PidNode):
         super(DepthControlNode, self).__init__(name=name)
 
         # bei ground truth: 6 1 1 (P I D)
-        #TODO zweite PID Regler Form in Control Package schreiben
+        # TODO zweite PID Regler Form in Control Package schreiben
         # .cfg files in bluerovcontrol aber regler aus Control aufrufen (in Launch files anpassen)
 
         self.setpoint = 0.0
@@ -24,7 +24,9 @@ class DepthControlNode(pid.PidNode):
                                                    Float64,
                                                    queue_size=1)
 
-        self.pressure_depth_pub = rospy.Publisher("pressure_depth",Float64,queue_size=1)
+        self.pressure_depth_pub = rospy.Publisher("depth_estimate",
+                                                  Float64,
+                                                  queue_size=1)
 
         self.depth_setpoint_sub = rospy.Subscriber("depth_setpoint",
                                                    Float64,
@@ -60,10 +62,10 @@ class DepthControlNode(pid.PidNode):
         self.vertical_thrust_pub.publish(Float64(u))
 
     def on_pressure(self, msg):
-        p_0 = 101325    #[Pa]
-        rho = 1000      #[kg/m]
-        g = 9.81        #[m/s]
-        
+        p_0 = 101325  # [Pa]
+        rho = 1000  # [kg/m]
+        g = 9.81  # [m/s]
+
         z = -(msg.fluid_pressure - p_0)/(rho*g)
 
         now = msg.header.stamp.to_sec()
@@ -71,7 +73,7 @@ class DepthControlNode(pid.PidNode):
         with self.data_lock:
             error = self.setpoint - z
             u = self.update_controller(error=error, now=now)
-        #rospy.loginfo(z)
+        # rospy.loginfo(z)
         self.pressure_depth_pub.publish(z)
         self.vertical_thrust_pub.publish(Float64(u))
 
@@ -84,6 +86,7 @@ class DepthControlNode(pid.PidNode):
             u = self.update_controller(error=error, now=now)
 
         self.vertical_thrust_pub.publish(Float64(u))
+
 
 def main():
     node = DepthControlNode("depth_controller")
