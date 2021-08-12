@@ -18,6 +18,7 @@
     <arg name="camera" default="true" />
 
     <!-- World -->
+    <!-- TODO: ÜBERARBEITEN IN BLUEROV_SIM -->
     <include file="$(find bluerov_sim)/launch/tank_full.launch" />
 
     <!-- EKF specific -->

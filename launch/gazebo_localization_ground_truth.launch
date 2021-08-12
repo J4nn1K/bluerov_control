@@ -2,9 +2,7 @@
     <!-- vehicle, camera name -->
     <arg name="vehicle_type" default="bluerov" />
     <arg name="vehicle_name" default="bluerov" />
-    <arg name="camera_name" default="front_camera" />
-    <arg name="do_rectify" value="false" />
-  
+
     <!-- use gazebo gui or rviz -->
     <arg name="gui" default="true" />
     <arg name="rviz" default="false" />
@@ -16,19 +14,10 @@
     <arg name="P" default="0.0" />
     <arg name="R" default="0.0" />
     <arg name="Y" default="1.57" />
-    <arg name="camera" default="true" />
+    <arg name="camera" default="false" />
 
-    <!-- known tags for AprilTag algorithm  -->
-    <arg name="tag_file" value="$(find mu_auv_localization)/config/tags_bundle_object.yaml" />
-  
     <!-- World -->
-    <!-- <include file="$(find bluerov_sim)/launch/gazebo_tags.launch" /> -->
-    <!-- TODO: ÜBERARBEITEN IN BLUEROV_SIM -->
     <include file="$(find bluerov_sim)/launch/tank_with_object.launch" />
-
-    <!-- EKF specific -->
-    <arg name="process_model" default="simple" />
-    <arg name="measurement_model" default="dist" />
   
     <!-- launch robot specific nodes in namespace -->
     <group ns="$(arg vehicle_name)">
@@ -48,17 +37,12 @@
   
       <!-- start tf publisher -->
       <include file="$(find hippocampus_common)/launch/tf_publisher.launch" pass_all_args="true"></include>
-  
-      <!-- start localization -->
-      <include file="$(find mu_auv_localization)/launch/localization_estimator_object.launch" pass_all_args="true"></include>
-  
+    
       <!-- Convert orientation from quaternion to roll, pitch, yaw -->
       <include file="$(find hippocampus_common)/launch/quat_to_rpy.launch" />
 
       <node name="armed" pkg="bluerov_control" type="arming.py"></node>
       <node name="mixer" pkg="bluerov_control" type="mixer.py"></node>
-      <node name="configuration_helper" pkg="bluerov_control" type="configuration_helper.py"></node>
-  
     </group>
   
   </launch>
