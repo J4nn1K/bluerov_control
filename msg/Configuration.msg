@@ -1,3 +1,6 @@
 Header header
-float64 angle_to_object
-float64 distance_to_object
+float64 distance
+float64 body_to_LOS
+float64 body_to_LOS_deg
+float64 object_to_LOS
+float64 object_to_LOS_deg
