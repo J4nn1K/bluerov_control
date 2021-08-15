@@ -36,15 +36,15 @@ class MixerNode():
                                         Float64,
                                         self.on_yaw,
                                         queue_size=1)
-        self.thrust_sub = rospy.Subscriber("thrust",
+        self.thrust_sub = rospy.Subscriber("surge",
                                            Float64,
                                            self.on_thrust,
                                            queue_size=1)
-        self.vertical_thrust_sub = rospy.Subscriber("vertical_thrust",
+        self.vertical_thrust_sub = rospy.Subscriber("heave",
                                                     Float64,
                                                     self.on_vertical_thrust,
                                                     queue_size=1)
-        self.lateral_thrust_sub = rospy.Subscriber("lateral_thrust", Float64,
+        self.lateral_thrust_sub = rospy.Subscriber("sway", Float64,
                                                    self.on_lateral_thrust)
 
     def run(self):

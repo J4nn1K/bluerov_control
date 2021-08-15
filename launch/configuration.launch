@@ -1,14 +1,12 @@
 <launch>
-    <!-- vehicle name -->
     <arg name="vehicle_name" default="bluerov" />
     <arg name="use_ground_truth" value="True"/>
-    
-    <!-- launch robot specific nodes in namespace -->
-    <group ns="$(arg vehicle_name)">
-        <node name="ground_truth_helper" pkg="bluerov_control" type="ground_truth_helper.py"></node>
-        <node name="configuration_helper" pkg="bluerov_control" type="configuration_helper.py">
-            <param name="use_ground_truth" value="$(arg use_ground_truth)" />
-        </node>
-    </group>
-  
+
+    <!-- <group ns="$(arg vehicle_name)"> -->
+    <node name="ground_truth_helper" pkg="bluerov_control" type="ground_truth_helper.py"></node>
+    <node name="configuration_helper" pkg="bluerov_control" type="configuration_helper.py">
+        <param name="use_ground_truth" value="$(arg use_ground_truth)" />
+    </node>
+    <!-- </group> -->
+
 </launch>

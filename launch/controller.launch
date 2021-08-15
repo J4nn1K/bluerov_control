@@ -1,0 +1,15 @@
+<launch> 
+    <arg name="vehicle_name" default="bluerov" />
+    
+    <group ns="$(arg vehicle_name)">
+        <node name="yaw_control" pkg="bluerov_control" type="yaw_control.py">
+            <rosparam file="$(find bluerov_control)/config/yaw_control_ground_truth.yaml" />
+        </node>
+        <node name="sway_control" pkg="bluerov_control" type="sway_control.py">
+            <rosparam file="$(find bluerov_control)/config/sway_control_ground_truth.yaml" />
+        </node>
+        <node name="surge_control" pkg="bluerov_control" type="surge_control.py">
+            <rosparam file="$(find bluerov_control)/config/surge_control_ground_truth.yaml" />
+        </node>
+    </group>
+</launch>

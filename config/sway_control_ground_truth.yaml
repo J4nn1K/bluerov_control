@@ -1,0 +1,7 @@
+p: 0.6
+i: 0.1
+d: 0.0
+saturation_lower: -0.5
+saturation_upper: 0.5
+integral_limit_lower: -0.5
+integral_limit_upper: 0.5

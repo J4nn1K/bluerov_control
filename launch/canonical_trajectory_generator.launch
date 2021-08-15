@@ -1,0 +1,6 @@
+<launch> 
+    <arg name="vehicle_name" default="bluerov" />
+    <group ns="$(arg vehicle_name)">
+        <node name="canonical_trajectory_generator" pkg="bluerov_control" type="canonical_trajectory_generator.py"></node>
+    </group>
+</launch>

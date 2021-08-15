@@ -19,6 +19,7 @@ generate_dynamic_reconfigure_options(
 add_message_files(
   FILES
   Configuration.msg
+  ControllerSetpoints.msg
 )
 
 generate_messages(

@@ -1,0 +1,3 @@
+bool yaw_controller_setpoint
+bool sway_controller_setpoint
+bool surge_controller_setpoint

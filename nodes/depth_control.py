@@ -20,7 +20,7 @@ class DepthControlNode(pid.PidNode):
 
         self.setpoint = 0.0
 
-        self.vertical_thrust_pub = rospy.Publisher("vertical_thrust",
+        self.vertical_thrust_pub = rospy.Publisher("heave",
                                                    Float64,
                                                    queue_size=1)
 
@@ -38,15 +38,15 @@ class DepthControlNode(pid.PidNode):
 #                                               self.on_local_pose,
 #                                               queue_size=1)
 
-        self.pressure_sub = rospy.Subscriber("/pressure",
-                                             FluidPressure,
-                                             self.on_pressure,
-                                             queue_size=1)
+#        self.pressure_sub = rospy.Subscriber("/pressure",
+#                                             FluidPressure,
+#                                             self.on_pressure,
+#                                             queue_size=1)
 
-#        self.ground_truth_sub = rospy.Subscriber("ground_truth/state",
-#                                                Odometry,
-#                                                self.on_ground_truth,
-#                                                queue_size=1)
+        self.ground_truth_sub = rospy.Subscriber("ground_truth/state",
+                                                Odometry,
+                                                self.on_ground_truth,
+                                                queue_size=1)
 
     def on_depth_setpoint(self, msg):
         self.setpoint = msg.data

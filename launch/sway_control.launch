@@ -1,0 +1,12 @@
+<launch> 
+    <arg name="vehicle_name" default="bluerov" />
+    
+    <group ns="$(arg vehicle_name)">
+        <arg name="param_file" default="$(find bluerov_control)/config/sway_control_ground_truth.yaml"/>
+        <!-- <arg name="param_file" default="$(find bluerov_control)/config/yaw_control_default.yaml" /> -->
+        <!-- <arg name="param_file" default="$(find bluerov_control)/config/yaw_control_default.yaml" /> -->
+        <node name="sway_control" pkg="bluerov_control" type="sway_control.py">
+            <rosparam file="$(arg param_file)" />
+        </node>
+    </group>
+</launch>
