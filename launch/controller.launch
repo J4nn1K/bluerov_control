@@ -1,5 +1,6 @@
 <launch> 
     <arg name="vehicle_name" default="bluerov" />
+    <arg name="arm" default="false" />
     
     <group ns="$(arg vehicle_name)">
         <node name="yaw_control" pkg="bluerov_control" type="yaw_control.py">
@@ -11,5 +12,8 @@
         <node name="surge_control" pkg="bluerov_control" type="surge_control.py">
             <rosparam file="$(find bluerov_control)/config/surge_control_ground_truth.yaml" />
         </node>
+        
+        <node name="mixer" pkg="bluerov_control" type="mixer.py" />
+        <node if="$(arg arm)" name="armed" pkg="bluerov_control" type="arming.py"></node>
     </group>
 </launch>

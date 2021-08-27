@@ -2,6 +2,7 @@
 
 import threading
 import rospy
+import math
 from hippocampus_common.node import Node
 from bluerov_control.msg import Configuration, ControllerSetpoints
 
@@ -11,11 +12,15 @@ class TrajectoryGeneratorNode(Node):
         super(TrajectoryGeneratorNode, self).__init__(name=name)
         self.data_lock = threading.RLock()
         
+        # TODO in ControllerSetpoints.msg bool und value reinnehmen (z.B. fuer anderen Anfahrtswinkel / Distanz)
+        # self.yaw_setpoint_active = False
+        # self.sway_setpoint_active = False
+        # self.surge_setpoint_active = False
         self.yaw_setpoint = False
         self.sway_setpoint = False
         self.surge_setpoint = False
-        
-        # TODO in ControllerSetpoints.msg bool und value reinnehmen (z.B. fuer anderen Anfahrtswinkel / Distanz)
+
+        self.error_tolerance = 0.1*math.pi
         
         self.configuration_sub = rospy.Subscriber("configuration",
                                                   Configuration,
@@ -36,13 +41,13 @@ class TrajectoryGeneratorNode(Node):
             self.yaw_setpoint = True
             
             # start sway controller when vehicle orientation is correct
-            if abs(body_to_LOS) < 0.05:
+            if abs(body_to_LOS) < self.error_tolerance:
                 self.sway_setpoint = True
             else: 
                 self.sway_setpoint = False
             
-            # start sway controller when vehicle orientation is correct
-            if abs(body_to_LOS) < 0.05 and abs(object_to_LOS) < 0.05:
+            # start surge controller when vehicle position is correct
+            if abs(body_to_LOS) < self.error_tolerance and abs(object_to_LOS) < self.error_tolerance:
                 self.surge_setpoint = True
             else:
                 self.surge_setpoint = False

@@ -1,12 +1,8 @@
 <launch>
-    <arg name="vehicle_name" default="bluerov" />
-    <arg name="use_ground_truth" value="True"/>
-
-    <!-- <group ns="$(arg vehicle_name)"> -->
-    <node name="ground_truth_helper" pkg="bluerov_control" type="ground_truth_helper.py"></node>
-    <node name="configuration_helper" pkg="bluerov_control" type="configuration_helper.py">
-        <param name="use_ground_truth" value="$(arg use_ground_truth)" />
-    </node>
-    <!-- </group> -->
-
+    <arg name="vehicle_name" value="bluerov" />
+    <group ns="$(arg vehicle_name)">
+        <node name="configuration_helper" pkg="bluerov_control" type="configuration_helper.py">
+            <param name="use_ground_truth" value="true" />
+        </node>
+    </group>
 </launch>

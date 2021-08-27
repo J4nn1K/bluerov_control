@@ -36,10 +36,10 @@
       </include>
   
       <!-- start tf publisher -->
-      <include file="$(find hippocampus_common)/launch/tf_publisher.launch" pass_all_args="true"></include>
+      <include file="$(find hippocampus_common)/launch/node_tf_publisher.launch" pass_all_args="true"></include>
     
       <!-- Convert orientation from quaternion to roll, pitch, yaw -->
-      <include file="$(find hippocampus_common)/launch/quat_to_rpy.launch" />
+      <include file="$(find hippocampus_common)/launch/inc_quat_to_rpy.launch" />
 
       <node name="armed" pkg="bluerov_control" type="arming.py"></node>
       <node name="mixer" pkg="bluerov_control" type="mixer.py"></node>
