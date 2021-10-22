@@ -14,39 +14,44 @@ class DepthControlNode(pid.PidNode):
     def __init__(self, name):
         super(DepthControlNode, self).__init__(name=name)
 
-        # bei ground truth: 6 1 1 (P I D)
-        # TODO zweite PID Regler Form in Control Package schreiben
-        # .cfg files in bluerovcontrol aber regler aus Control aufrufen (in Launch files anpassen)
-
         self.setpoint = 0.0
+
+        self.use_barometer = self.get_param("~use_barometer",
+                                            default=True)
+        self.use_localization = self.get_param("~use_localization",
+                                               default=False)
+        self.use_ground_truth = self.get_param("~use_ground_truth",
+                                               default=False)
 
         self.vertical_thrust_pub = rospy.Publisher("heave",
                                                    Float64,
                                                    queue_size=1)
 
-        self.pressure_depth_pub = rospy.Publisher("depth_estimate",
-                                                  Float64,
-                                                  queue_size=1)
-
         self.depth_setpoint_sub = rospy.Subscriber("depth_setpoint",
                                                    Float64,
                                                    self.on_depth_setpoint,
                                                    queue_size=1)
+        if self.use_barometer:
+            self.pressure_sub = rospy.Subscriber("/pressure",
+                                                 FluidPressure,
+                                                 self.on_pressure,
+                                                 queue_size=1)
 
-#        self.local_pose_sub = rospy.Subscriber("mavros/local_position/pose",
-#                                               PoseStamped,
-#                                               self.on_local_pose,
-#                                               queue_size=1)
+            self.pressure_depth_pub = rospy.Publisher("depth_estimate",
+                                                      Float64,
+                                                      queue_size=1)
 
-#        self.pressure_sub = rospy.Subscriber("/pressure",
-#                                             FluidPressure,
-#                                             self.on_pressure,
-#                                             queue_size=1)
+        if self.use_localization:
+            self.local_pose_sub = rospy.Subscriber("mavros/local_position/pose",
+                                                   PoseStamped,
+                                                   self.on_local_pose,
+                                                   queue_size=1)
 
-        self.ground_truth_sub = rospy.Subscriber("ground_truth/state",
-                                                Odometry,
-                                                self.on_ground_truth,
-                                                queue_size=1)
+        if self.use_ground_truth:
+            self.ground_truth_sub = rospy.Subscriber("ground_truth/state",
+                                                     Odometry,
+                                                     self.on_ground_truth,
+                                                     queue_size=1)
 
     def on_depth_setpoint(self, msg):
         self.setpoint = msg.data

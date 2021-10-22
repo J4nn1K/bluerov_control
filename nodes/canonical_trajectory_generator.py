@@ -13,9 +13,9 @@ class TrajectoryGeneratorNode(Node):
         self.data_lock = threading.RLock()
         
         # TODO in ControllerSetpoints.msg bool und value reinnehmen (z.B. fuer anderen Anfahrtswinkel / Distanz)
-        # self.yaw_setpoint_active = False
-        # self.sway_setpoint_active = False
-        # self.surge_setpoint_active = False
+        # self.yaw_control = False
+        # self.sway_control = False
+        # self.surge_control = False
         self.yaw_setpoint = False
         self.sway_setpoint = False
         self.surge_setpoint = False

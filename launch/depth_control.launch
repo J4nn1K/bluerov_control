@@ -1,10 +1,16 @@
 <launch> 
     <arg name="vehicle_name" default="bluerov" />
+    <arg name="use_barometer" default="true"/>
+    <arg name="use_localization" default="false"/>
+    <arg name="use_ground_truth" default="false"/>
     
     <group ns="$(arg vehicle_name)">
         <arg name="param_file" default="$(find bluerov_control)/config/depth_control_simulation.yaml" />
         <node name="depth_control" pkg="bluerov_control" type="depth_control.py">
             <rosparam file="$(arg param_file)" />
+            <param name="use_barometer" value="$(arg use_barometer)" />
+            <param name="use_localization" value="$(arg use_localization)" />
+            <param name="use_ground_truth" value="$(arg use_ground_truth)" />
         </node>
         <node name="depth_setpoint" pkg="bluerov_control" type="depth_setpoint.py">
 

@@ -14,19 +14,20 @@ class ConfigurationHelperNode(Node):
         super(ConfigurationHelperNode, self).__init__(name=name)
         self.data_lock = threading.RLock()
 
-        self.use_ground_truth = self.get_param("~use_ground_truth",
-                                               default=True)
+        self.use_localization = self.get_param("~use_localization",
+                                               default=False)
 
-        if self.use_ground_truth:
-            self.object_pose_ground_truth_sub = rospy.Subscriber("object_pose_ground_truth",
-                                                                 PoseStamped,
-                                                                 self.on_object_pose,
-                                                                 queue_size=1)
-        else:
+        if self.use_localization:
             self.object_pose_sub = rospy.Subscriber("object_pose",
                                                     PoseStamped,
                                                     self.on_object_pose,
                                                     queue_size=1)
+
+        else:
+            self.object_pose_ground_truth_sub = rospy.Subscriber("object_pose_ground_truth",
+                                                                 PoseStamped,
+                                                                 self.on_object_pose,
+                                                                 queue_size=1)
 
         self.configuration_pub = rospy.Publisher("configuration",
                                                  Configuration,
@@ -39,15 +40,16 @@ class ConfigurationHelperNode(Node):
             y = msg.pose.position.y
 
             r = math.sqrt(x**2 + y**2)
-            
+
             orientation = msg.pose.orientation
-            orientation_euler = euler_from_quaternion([orientation.x, orientation.y, orientation.z, orientation.w])
+            orientation_euler = euler_from_quaternion(
+                [orientation.x, orientation.y, orientation.z, orientation.w])
             object_orientation_z = orientation_euler[2]
             # convert orientation of object to positive angles
             if(object_orientation_z < 0):
                 object_orientation_z += 2*math.pi
-            
-            # calculate angle from body to line of sight 
+
+            # calculate angle from body to line of sight
             if y >= 0:
                 body_to_LOS = math.acos(x/r)
             elif y < 0:

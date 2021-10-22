@@ -1,8 +1,10 @@
 <launch>
     <arg name="vehicle_name" value="bluerov" />
+    <arg name="use_localization" doc="(true/false)"/>
+    
     <group ns="$(arg vehicle_name)">
         <node name="configuration_helper" pkg="bluerov_control" type="configuration_helper.py">
-            <param name="use_ground_truth" value="true" />
+            <param name="use_localization" value="$(arg use_localization)"/>
         </node>
     </group>
 </launch>

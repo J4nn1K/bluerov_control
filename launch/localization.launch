@@ -1,6 +1,6 @@
 <launch>
-    <arg name="simulation" default="true" />
-    <arg name="use_localization" default="false" />
+    <arg name="simulation" doc="(true/false)"/>
+    <arg name="use_localization" doc="(true/false)"/>
 
     <arg name="vehicle_type" default="bluerov" />
     <arg name="vehicle_name" default="bluerov" />
@@ -9,13 +9,13 @@
     <group if="$(arg simulation)">
         <arg name="x" default="0.7" />
         <arg name="y" default="2.0" />
-        <arg name="z" default="-0.7" />
+        <arg name="z" default="-0.1" />
         <arg name="P" default="0.0" />
         <arg name="R" default="0.0" />
         <arg name="Y" default="1.57" />
         <arg name="camera" value="$(eval arg('use_localization') == true)"/>
         
-        <include file="$(find bluerov_sim)/launch/tank_with_object.launch" />
+        <include file="$(find bluerov_sim)/launch/apriltag_tank_with_object.launch" />
 
         <group ns="$(arg vehicle_name)">
             <include file="$(find bluerov_sim)/launch/spawn_vehicle.launch">

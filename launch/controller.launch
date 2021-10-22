@@ -1,6 +1,6 @@
 <launch> 
     <arg name="vehicle_name" default="bluerov" />
-    <arg name="arm" default="false" />
+    <arg name="arm" doc="false" />
     
     <group ns="$(arg vehicle_name)">
         <node name="yaw_control" pkg="bluerov_control" type="yaw_control.py">
