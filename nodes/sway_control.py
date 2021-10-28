@@ -28,7 +28,8 @@ class SwayControlNode(pid.PidNode):
                                         queue_size=1)
 
     def on_controller_setpoints(self,msg):
-        self.controller_active = msg.sway_controller_setpoint
+        self.controller_active = msg.sway_control
+        self.setpoint = msg.sway_setpoint
 
     def on_configuration(self, msg):
         now = msg.header.stamp.to_sec()

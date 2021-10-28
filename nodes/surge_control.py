@@ -28,7 +28,8 @@ class SurgeControlNode(pid.PidNode):
                                          queue_size=1)
 
     def on_controller_setpoints(self, msg):
-        self.controller_active = msg.surge_controller_setpoint
+        self.controller_active = msg.surge_control
+        self.setpoint = msg.surge_setpoint
 
     def on_configuration(self, msg):
         now = msg.header.stamp.to_sec()

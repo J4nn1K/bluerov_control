@@ -6,21 +6,26 @@ import math
 from hippocampus_common.node import Node
 from bluerov_control.msg import Configuration, ControllerSetpoints
 
-
+# 4D Trajectory Sequencer
 class TrajectoryGeneratorNode(Node):
     def __init__(self, name):
         super(TrajectoryGeneratorNode, self).__init__(name=name)
         self.data_lock = threading.RLock()
         
-        # TODO in ControllerSetpoints.msg bool und value reinnehmen (z.B. fuer anderen Anfahrtswinkel / Distanz)
-        # self.yaw_control = False
-        # self.sway_control = False
-        # self.surge_control = False
-        self.yaw_setpoint = False
-        self.sway_setpoint = False
-        self.surge_setpoint = False
+        self.heave_control = False
+        self.yaw_control = False
+        self.sway_control = False  
+        self.surge_control = False
+        
+        self.heave_setpoint = -0.53
+        self.yaw_setpoint = 0.0
+        self.sway_setpoint = 0.0
+        self.surge_setpoint = 0.0
 
-        self.error_tolerance = 0.1*math.pi
+        self.heave_tolerance = 0.1
+        self.yaw_tolerance = 0.1
+        self.sway_tolerance = 0.1
+
         
         self.configuration_sub = rospy.Subscriber("configuration",
                                                   Configuration,
@@ -33,29 +38,38 @@ class TrajectoryGeneratorNode(Node):
 
     def on_configuration(self, msg):
         with self.data_lock:
+            # configuration
+            # TODO depth bzw. heave hinzufuegen
             body_to_LOS = msg.body_to_LOS
             object_to_LOS = msg.object_to_LOS
             distance = msg.distance
 
+            # start heave control
+            #self.heave_control = True
+            
+            
             # start yaw controller
-            self.yaw_setpoint = True
+            self.yaw_control = True
             
             # start sway controller when vehicle orientation is correct
-            if abs(body_to_LOS) < self.error_tolerance:
-                self.sway_setpoint = True
+            if abs(body_to_LOS) < self.yaw_tolerance:
+                self.sway_control = True
             else: 
-                self.sway_setpoint = False
+                self.sway_control = False
             
             # start surge controller when vehicle position is correct
-            if abs(body_to_LOS) < self.error_tolerance and abs(object_to_LOS) < self.error_tolerance:
-                self.surge_setpoint = True
+            if abs(body_to_LOS) < self.yaw_tolerance and abs(object_to_LOS) < self.sway_tolerance:
+                self.surge_control = True
             else:
-                self.surge_setpoint = False
+                self.surge_control = False
 
             setpoints = ControllerSetpoints()
-            setpoints.yaw_controller_setpoint = self.yaw_setpoint
-            setpoints.sway_controller_setpoint = self.sway_setpoint
-            setpoints.surge_controller_setpoint = self.surge_setpoint
+            setpoints.yaw_control = self.yaw_control
+            setpoints.sway_control = self.sway_control 
+            setpoints.surge_control = self.surge_control
+            setpoints.yaw_setpoint = self.yaw_setpoint
+            setpoints.sway_setpoint = self.sway_setpoint
+            setpoints.surge_setpoint = self.surge_setpoint
 
             self.controller_setpoint_pub.publish(setpoints)
 

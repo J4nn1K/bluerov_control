@@ -15,5 +15,6 @@
         
         <node name="mixer" pkg="bluerov_control" type="mixer.py" />
         <node if="$(arg arm)" name="armed" pkg="bluerov_control" type="arming.py"></node>
+        <node name="thruster_tester" pkg="bluerov_control" type="thruster_tester.py" />
     </group>
 </launch>

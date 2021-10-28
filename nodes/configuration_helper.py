@@ -14,6 +14,8 @@ class ConfigurationHelperNode(Node):
         super(ConfigurationHelperNode, self).__init__(name=name)
         self.data_lock = threading.RLock()
 
+        #TODO Hier auch tiefenschätzung integrieren mit parameter zu ground_truth/schätzung/barometer
+
         self.use_localization = self.get_param("~use_localization",
                                                default=False)
 

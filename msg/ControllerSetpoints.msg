@@ -1,3 +1,8 @@
-bool yaw_controller_setpoint
-bool sway_controller_setpoint
-bool surge_controller_setpoint
+bool heave_control
+float64 heave_setpoint
+bool yaw_control
+float64 yaw_setpoint
+bool sway_control
+float64 sway_setpoint
+bool surge_control
+float64 surge_setpoint

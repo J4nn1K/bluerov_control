@@ -28,7 +28,8 @@ class YawControlNode(pid.PidNode):
                                        queue_size=1)
 
     def on_controller_setpoints(self,msg):
-        self.controller_active = msg.yaw_controller_setpoint
+        self.controller_active = msg.yaw_control
+        self.setpoint = msg.yaw_setpoint
 
     def on_configuration(self, msg):
         now = msg.header.stamp.to_sec()
