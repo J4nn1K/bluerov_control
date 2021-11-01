@@ -14,8 +14,6 @@ class ConfigurationHelperNode(Node):
         super(ConfigurationHelperNode, self).__init__(name=name)
         self.data_lock = threading.RLock()
 
-        #TODO Hier auch tiefenschätzung integrieren mit parameter zu ground_truth/schätzung/barometer
-
         self.use_localization = self.get_param("~use_localization",
                                                default=False)
 
@@ -26,53 +24,51 @@ class ConfigurationHelperNode(Node):
                                                     queue_size=1)
 
         else:
-            self.object_pose_ground_truth_sub = rospy.Subscriber("object_pose_ground_truth",
+            self.pose_from_object_ground_truth_sub = rospy.Subscriber("pose_from_object_ground_truth",
                                                                  PoseStamped,
-                                                                 self.on_object_pose,
+                                                                 self.on_pose,
                                                                  queue_size=1)
 
         self.configuration_pub = rospy.Publisher("configuration",
                                                  Configuration,
                                                  queue_size=1)
 
-    def on_object_pose(self, msg):
+    def on_pose(self, msg):
         with self.data_lock:
-            # all data referenced in body frame
+            # all data referenced in object frame
             x = msg.pose.position.x
             y = msg.pose.position.y
 
             r = math.sqrt(x**2 + y**2)
 
             orientation = msg.pose.orientation
-            orientation_euler = euler_from_quaternion(
-                [orientation.x, orientation.y, orientation.z, orientation.w])
-            object_orientation_z = orientation_euler[2]
+            orientation_euler = euler_from_quaternion([orientation.x, orientation.y, orientation.z, orientation.w])
+            body_orientation_z = orientation_euler[2]
             # convert orientation of object to positive angles
-            if(object_orientation_z < 0):
-                object_orientation_z += 2*math.pi
+            if(body_orientation_z < 0):
+                body_orientation_z += 2*math.pi
 
-            # calculate angle from body to line of sight
+            # calculate angle from object x-axis to line of sight
             if y >= 0:
-                body_to_LOS = math.acos(x/r)
+                object_to_LOS = math.acos(x/r)
             elif y < 0:
-                body_to_LOS = 2*math.pi - math.acos(x/r)
+                object_to_LOS = 2*math.pi - math.acos(x/r)
 
-            # calculate ange from object to line of sight
-            object_to_LOS = math.pi - object_orientation_z + body_to_LOS
+            # calculate ange from body x-axis to line of sight
+            body_to_LOS = math.pi - body_orientation_z + object_to_LOS
             # cut to range [0, 2*pi]
-            if(object_to_LOS < 0):
-                object_to_LOS += 2*math.pi
-            if(object_to_LOS > 2*math.pi):
-                object_to_LOS -= 2*math.pi
+            if(body_to_LOS < 0):
+                body_to_LOS += 2*math.pi
+            if(body_to_LOS > 2*math.pi):
+                body_to_LOS -= 2*math.pi
 
             # transform to range [-pi, pi]
-            if(body_to_LOS > math.pi):
-                body_to_LOS -= 2*math.pi
             if(object_to_LOS > math.pi):
                 object_to_LOS -= 2*math.pi
+            if(body_to_LOS > math.pi):
+                body_to_LOS -= 2*math.pi
 
-            # Offset: base_link to gripper_link
-            distance = r - 0.38
+            distance = r
 
             message = Configuration(distance=distance,
                                     body_to_LOS=body_to_LOS,

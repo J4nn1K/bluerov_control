@@ -20,7 +20,7 @@ class TrajectoryGeneratorNode(Node):
         self.heave_setpoint = -0.53
         self.yaw_setpoint = 0.0
         self.sway_setpoint = 0.0
-        self.surge_setpoint = 0.0
+        self.surge_setpoint = 0.38
 
         self.heave_tolerance = 0.1
         self.yaw_tolerance = 0.1
