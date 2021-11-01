@@ -57,6 +57,8 @@ class TrajectoryGeneratorNode(Node):
             else: 
                 self.sway_control = False
             
+            # TODO in Schleife des sway Controllers einbauen:
+            
             # start surge controller when vehicle position is correct
             if abs(body_to_LOS) < self.yaw_tolerance and abs(object_to_LOS) < self.sway_tolerance:
                 self.surge_control = True

@@ -18,9 +18,9 @@ class ConfigurationHelperNode(Node):
                                                default=False)
 
         if self.use_localization:
-            self.object_pose_sub = rospy.Subscriber("object_pose",
+            self.pose_from_object_sub = rospy.Subscriber("pose_from_object",
                                                     PoseStamped,
-                                                    self.on_object_pose,
+                                                    self.on_pose,
                                                     queue_size=1)
 
         else:
