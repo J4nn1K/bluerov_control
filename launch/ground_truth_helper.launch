@@ -1,0 +1,5 @@
+<launch>
+    <group ns="bluerov">
+        <node name="ground_truth_helper" pkg="bluerov_control" type="ground_truth_helper.py"></node>
+    </group>
+</launch>

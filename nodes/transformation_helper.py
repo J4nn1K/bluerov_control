@@ -24,7 +24,7 @@ class TransformationHelperNode(Node):
         while not rospy.is_shutdown():
             try:
                 self.transformation = self.tfBuffer.lookup_transform(
-                    'object_frame', self.tf_helper.get_base_link_id(), rospy.Time())
+                    "object_frame", "bluerov/base_link_from_object", rospy.Time())
             except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
                 rate.sleep()
                 continue
