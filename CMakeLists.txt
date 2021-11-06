@@ -23,9 +23,15 @@ add_message_files(
   ControllerSetpoints.msg
 )
 
+add_service_files(
+  FILES
+  Bezier.srv
+)
+
 generate_messages(
   DEPENDENCIES
   std_msgs
+  geometry_msgs
 )
 
 catkin_package(

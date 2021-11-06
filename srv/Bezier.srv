@@ -1,0 +1,6 @@
+float64 x_pose_from_object 
+float64 y_pose_from_object
+float64 yaw_angle_from_object 
+---
+float64[] x_waypoints
+float64[] y_waypoints

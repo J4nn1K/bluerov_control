@@ -56,7 +56,7 @@ class MixerNode():
 
     def map(self, bound, value):
         # assumes value is normalized to [-1;1]
-        # bound will be used to re-map value
+        # bound will be used to re-map value - 0.13 with T200 Thrusters
         if value == 0.0:
             return 0.0
         elif value > 0.0:
