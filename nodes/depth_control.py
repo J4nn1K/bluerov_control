@@ -32,7 +32,7 @@ class DepthControlNode(pid.PidNode):
                                                    self.on_depth_setpoint,
                                                    queue_size=1)
         if self.use_barometer:
-            self.pressure_sub = rospy.Subscriber("/pressure",
+            self.pressure_sub = rospy.Subscriber("pressure",
                                                  FluidPressure,
                                                  self.on_pressure,
                                                  queue_size=1)

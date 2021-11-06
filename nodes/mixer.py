@@ -54,6 +54,16 @@ class MixerNode():
             self.setpoint_pub.publish(msg)
             rate.sleep()
 
+    def map(self, bound, value):
+        # assumes value is normalized to [-1;1]
+        # bound will be used to re-map value
+        if value == 0.0:
+            return 0.0
+        elif value > 0.0:
+            return (value*(1-bound)) + bound
+        elif value < 0.0:
+            return (value*(1-bound)) - bound
+
     def on_roll(self, msg):
         with self.data_lock:
             self.roll = msg.data

@@ -1,0 +1,11 @@
+<launch>
+    <arg name="vehicle_type" default="bluerov" />
+    <arg name="vehicle_name" default="bluerov" />
+    <!-- INDEPENDENT NODES AND LAUNCH FILES -->
+    <group ns="$(arg vehicle_name)">
+        <param name="vehicle_name" value="$(arg vehicle_name)" />
+        <param name="vehicle_type" value="$(arg vehicle_type)" />
+        <include file="$(find hippocampus_common)/launch/node_tf_publisher.launch" pass_all_args="true" />
+        <include file="$(find hippocampus_common)/launch/inc_quat_to_rpy.launch" />
+    </group>
+</launch>
