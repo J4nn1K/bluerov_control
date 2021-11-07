@@ -36,17 +36,6 @@ class PathGenerator():
         orientation = euler_from_quaternion([quat.x, quat.y, quat.z, quat.w])
         self.yaw_angle = orientation[2]
 
-    # def bezier_client(self):
-    #     rospy.wait_for_service('generate_bezier_curve')
-    #     try:
-    #         generate_bezier_curve = rospy.ServiceProxy(
-    #             'generate_bezier_curve', Bezier)
-
-    #         resp1 = generate_bezier_curve(self.x, self.y, self.yaw_angle)
-    #         return resp1
-
-    #     except rospy.ServiceException as e:
-    #         print("Service call failed: %s" % e)
     
     def bernstein_polynomial(self, i, n, t):
         return comb(n, i) * (t**(n-i)) * (1 - t)**i
@@ -71,7 +60,6 @@ class PathGenerator():
 
     def run(self):
         rospy.sleep(2)
-        # response = self.bezier_client()
 
         point0_x = self.x
         point0_y = self.y
