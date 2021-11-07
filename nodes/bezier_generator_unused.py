@@ -59,7 +59,7 @@ def handle_generate_bezier_curve(req):
         [point3_x, point3_y]
     ]
 
-    bezier_curve(points, 25)
+    xvals, yvals = bezier_curve(points, 25)
 
     return BezierResponse(xvals, yvals)
 

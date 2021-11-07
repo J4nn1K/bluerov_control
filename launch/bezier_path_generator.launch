@@ -1,0 +1,6 @@
+<launch> 
+    <arg name="vehicle_name" default="bluerov" />
+    <group ns="$(arg vehicle_name)">
+        <node name="path_generator" pkg="bluerov_control" type="path_generator.py" output="screen"></node>
+    </group>
+</launch>
