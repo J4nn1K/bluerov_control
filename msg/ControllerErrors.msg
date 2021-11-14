@@ -1,0 +1,9 @@
+Header header
+bool heave_control
+float64 heave_error
+bool yaw_control
+float64 yaw_error
+bool sway_control
+float64 sway_error
+bool surge_control
+float64 surge_error

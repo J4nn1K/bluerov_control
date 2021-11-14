@@ -72,6 +72,7 @@ class TrajectoryGeneratorNode(Node):
             setpoints.yaw_setpoint = self.yaw_setpoint
             setpoints.sway_setpoint = self.sway_setpoint
             setpoints.surge_setpoint = self.surge_setpoint
+            # error = -(self.setpoint - body_to_LOS)
 
             self.controller_setpoint_pub.publish(setpoints)
 

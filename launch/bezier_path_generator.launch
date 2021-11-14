@@ -1,6 +1,10 @@
 <launch> 
     <arg name="vehicle_name" default="bluerov" />
+    <arg name="use_ground_truth" />
     <group ns="$(arg vehicle_name)">
-        <node name="path_generator" pkg="bluerov_control" type="path_generator.py" output="screen"></node>
+        <node name="path_generator" pkg="bluerov_control" type="path_generator.py" output="screen">
+            <param name="use_ground_truth" value="$(arg use_ground_truth)" />
+        </node>
+        <node name="path_follower" pkg="bluerov_control" type="path_follower.py" output="screen"></node>
     </group>
 </launch>
