@@ -1,5 +1,5 @@
-p: 0.6
-i: 0.1
+p: 2.0
+i: 0.0
 d: 0.0
 saturation_lower: -0.5
 saturation_upper: 0.5

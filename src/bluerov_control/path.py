@@ -14,7 +14,7 @@ class Path(object):
 
         for _ in range(n_points):
             if index >= n_points:
-                index -= 1
+                # index = n_points - 1
                 break
             vector = self.waypoints[:,index] - position
             #point_square = np.inner(vector, vector)
@@ -24,9 +24,8 @@ class Path(object):
                 break
             index += 1
 
-        # if not success:
-        #     if not loop:
-        #         index = n_points - 1
+        if not success:
+           index = n_points -1
 
         self.target_index = index % n_points
         self.target_point = self.waypoints[:,self.target_index]

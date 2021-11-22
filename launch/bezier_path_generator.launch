@@ -7,4 +7,5 @@
         </node>
         <node name="path_follower" pkg="bluerov_control" type="path_follower.py" output="screen"></node>
     </group>
+    <include file="$(find bluerov_control)/launch/depth_control.launch"/>
 </launch>

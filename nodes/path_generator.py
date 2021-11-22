@@ -61,7 +61,7 @@ class PathGenerator():
 
         self.points = [
             [point0_x, point0_y],
-            [point1_x, point1_y],
+            # [point1_x, point1_y],
             [point2_x, point2_y],
             [point3_x, point3_y]
         ]
@@ -87,10 +87,11 @@ class PathGenerator():
 
     def plot_curve(self, x_waypoints, y_waypoints):
         plt.plot(x_waypoints, y_waypoints, ".")
-        plt.plot([self.points[0][0], self.points[1][0]], [
-                 self.points[0][1], self.points[1][1]], "ro-")
-        plt.plot([self.points[2][0], self.points[3][0]], [
-                 self.points[2][1], self.points[3][1]], "ro-")
+        # plt.plot([self.points[0][0], self.points[1][0]], [
+        #          self.points[0][1], self.points[1][1]], "ro-")
+        # plt.plot([self.points[2][0], self.points[3][0]], [
+        #          self.points[2][1], self.points[3][1]], "ro-")
+        # plt.plot([self.points[0][0], self.points[0][1]],"ro-")
         plt.xlim([-0.1, 3])
         plt.xlabel("$x_o$")
         plt.ylim([-0.8, 0.8])
@@ -122,24 +123,23 @@ class PathGenerator():
         
         rate = rospy.Rate(30)
         while not rospy.is_shutdown():
-            if self.path.update_target(position=self.position, look_ahead_distance=self.look_ahead_distance):
-                target = self.path.get_target_point()
-                
-                msg = PathTargets()
-                msg.header.stamp = rospy.Time.now()
-                msg.current_x = self.x
-                msg.current_y = self.y
-                msg.current_yaw = self.yaw_angle
-                msg.target_x = target[0]
-                msg.target_y = target[1]
+            self.path.update_target(position=self.position, look_ahead_distance=self.look_ahead_distance)
+            target = self.path.get_target_point()
+            
+            msg = PathTargets()
+            msg.header.stamp = rospy.Time.now()
+            msg.current_x = self.x
+            msg.current_y = self.y
+            msg.current_yaw = self.yaw_angle
+            msg.target_x = target[0]
+            msg.target_y = target[1]
+            self.path_targets_pub.publish(msg)
+            
+            #vector = target - self.position
+            #yaw_angle_to_target = math.atan2(vector[1], vector[0])
 
-                self.path_targets_pub.publish(msg)
-                
-                #vector = target - self.position
-                #yaw_angle_to_target = math.atan2(vector[1], vector[0])
-
-            else:
-                rospy.logwarn("Could not update target position.")
+            
+            #rospy.logwarn("Could not update target position.")
 
             rate.sleep()
 

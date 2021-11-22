@@ -8,4 +8,12 @@
         <include file="$(find hippocampus_common)/launch/node_tf_publisher.launch" pass_all_args="true" />
         <include file="$(find hippocampus_common)/launch/inc_quat_to_rpy.launch" />
     </group>
+    <group ns="$(arg vehicle_name)">
+        <node name="configuration_helper" pkg="bluerov_control" type="configuration_helper.py">
+            <param name="use_localization" value="$(arg use_localization)"/>
+        </node>
+        <group if="$(arg use_localization)">
+            <node name="transformation_helper" pkg="bluerov_control" type="transformation_helper.py"/>
+        </group>
+    </group>
 </launch>
